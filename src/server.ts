@@ -82,6 +82,37 @@ app.use(helmet());
 //Apply rate limiting middleware to prevent excessive requests and enhance security
 app.use(limiter);
 
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Digital ID Card API',
+    status: '✅ Running on Vercel Serverless',
+    version: '1.0.0',
+    environment: process.env.NODE_ENV || 'production',
+    endpoints: {
+      health: '/health (GET)',
+      api: {
+        auth: '/api/v1/auth/login (POST), /api/v1/auth/register (POST)',
+        users: '/api/v1/users/*',
+        cards: '/api/v1/cards/*',
+        dashboard: '/api/v1/dashboard/*',
+        upload: '/api/v1/upload/*'
+      }
+    },
+    deployed_at: new Date().toISOString()
+  });
+});
+
+// Health endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    message: 'Digital ID Card API is healthy',
+    version: '1.0.0',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Mount API routes
 app.use('/api/v1', v1Router);
 
