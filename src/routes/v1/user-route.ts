@@ -4,10 +4,10 @@ import {
   meController,
   updateProfileController,
   updateUserByAdminController,
-} from '@/controller';
-import { UserRole } from '@/enum';
-import { authMiddleware } from '@/middleware/auth-middleware';
-import { roleCheck } from '@/middleware/role-middleware';
+} from '../../controller';
+import { UserRole } from '../../enum';
+import { authMiddleware } from '../../middleware/auth-middleware';
+import { roleCheck } from '../../middleware/role-middleware';
 import { Router } from 'express';
 const router = Router();
 

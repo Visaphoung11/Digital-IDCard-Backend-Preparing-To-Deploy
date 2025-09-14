@@ -6,81 +6,17 @@
 /**
  * Node Modules
  */
-import express from 'express';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import compression from 'compression';
-import helmet from 'helmet';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 /**
  * Custom Modules
  */
 import config from '../src/config';
-import limiter from '../src/lib/express_rate_limit';
-
-/**
- * Router
- */
-import v1Router from '../src/routes/v1';
-
-/**
- * Types
- */
-import type { CorsOptions } from 'cors';
-import { errorHandler } from '../src/util/error-handler';
 import { seedAdminUser } from '../src/data/seed-admin';
-import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 /**
- * Express app initialization
+ * Initialize database connection (only once)
  */
-const app = express();
-
-//Configure cors options
-const corsOptions: CorsOptions = {
-  origin(origin, callback) {
-    // callback(new Error('CORS Error'), false);
-    if (
-      config.NODE_ENV === 'development' ||
-      !origin ||
-      config.WHITELIST_ORIGINS.includes(origin)
-    ) {
-      callback(null, true);
-    } else {
-      //Reject the request
-      callback(
-        new Error(`CORS Error : ${origin} is not allowed by CORS`),
-        false,
-      );
-      console.log(`CORS Error : ${origin} is not allowed by CORS`);
-    }
-  },
-  credentials: true,
-};
-
-//Apply cors middleware
-app.use(cors(corsOptions));
-app.use(errorHandler);
-
-//Enable json parsing body
-app.use(express.json());
-
-//Enable URL-encoded parsing body parsing with extended mode
-//`extended : true` allow rich objects and arrays via query string library
-app.use(express.urlencoded({ extended: true }));
-
-app.use(cookieParser());
-
-//Enable response compression to reduce payload size and improve performance
-app.use(compression({ threshold: 1024 })); // only compress responses larger than 1kb
-
-// Use Helmet to enhance security by setting various HTTP headers
-app.use(helmet());
-
-//Apply rate limiting middleware to prevent excessive requests and enhance security
-app.use(limiter);
-
-// Initialize database connection (only once)
 let isDbInitialized = false;
 
 const initializeDatabase = async () => {
@@ -88,39 +24,84 @@ const initializeDatabase = async () => {
     try {
       await config.DATA_SOURCE.initialize();
       console.log('✅ Database connection successful');
-      await seedAdminUser();
+      console.log('NODE_ENV:', process.env.NODE_ENV);
+      console.log('DB_HOST present:', !!process.env.DB_HOST);
+      console.log('DB_PORT:', process.env.DB_PORT);
+
       isDbInitialized = true;
     } catch (error) {
-      console.error('❌ Database connection failed:', error);
+      console.error('❌ Database initialization failed:', error);
       throw error;
     }
   }
 };
 
-app.use('/api/v1', v1Router);
-
-// Root endpoint
-app.get('/', (req, res) => {
-  res.json({
-    message: 'Digital ID Card API',
-    status: 'Running on Vercel',
-    version: '1.0.0'
-  });
-});
-
-// Vercel serverless function handler
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     // Initialize database on first request
     await initializeDatabase();
-    
-    // Handle the request with Express app
-    return app(req, res);
-  } catch (error) {
-    console.error('Handler error:', error);
+
+    const { pathname } = new URL(req.url || '', `http://${req.headers.host}`);
+
+    // Set CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+    // Handle preflight OPTIONS requests
+    if (req.method === 'OPTIONS') {
+      return res.status(200).end();
+    }
+
+    // Route handling
+    if (pathname === '/' || pathname === '') {
+      return res.status(200).json({
+        message: 'Digital ID Card API',
+        status: '✅ Running on Vercel Serverless',
+        version: '1.0.0',
+        endpoints: {
+          health: '/health',
+          api: '/api/v1',
+          status: 'Database connected successfully'
+        }
+      });
+    }
+
+    // Health check endpoint
+    if (pathname === '/health') {
+      return res.status(200).json({
+        status: 'ok',
+        message: 'Digital ID Card API is healthy',
+        version: '1.0.0',
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // API routes
+    if (pathname.startsWith('/api/v1')) {
+      return res.status(200).json({
+        error: 'Endpoint not implemented',
+        message: 'This is a simplified Vercel handler',
+        path: pathname,
+        available: '/health, /'
+      });
+    }
+
+    // Default response for unknown routes
+    return res.status(200).json({
+      message: 'Digital ID Card API Serverless Function',
+      path: pathname,
+      method: req.method,
+      note: 'Full Express app integration coming soon'
+    });
+
+  } catch (error: any) {
+    console.error('❌ Handler error:', error.message);
+
     return res.status(500).json({
       error: 'Internal server error',
-      message: 'Failed to initialize server'
+      message: error.message || 'Failed to initialize server',
+      timestamp: new Date().toISOString()
     });
   }
-}
+};

@@ -7,10 +7,10 @@ import {
   getCardsAdminController,
   getCardsUserController,
   updateCardController,
-} from '@/controller/card-controller';
-import { UserRole } from '@/enum';
-import { authMiddleware } from '@/middleware/auth-middleware';
-import { roleCheck } from '@/middleware/role-middleware';
+} from '../../controller/card-controller';
+import { UserRole } from '../../enum';
+import { authMiddleware } from '../../middleware/auth-middleware';
+import { roleCheck } from '../../middleware/role-middleware';
 
 import { Router } from 'express';
 

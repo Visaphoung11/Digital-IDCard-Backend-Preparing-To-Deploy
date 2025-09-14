@@ -1,6 +1,6 @@
-import { AppDataSource } from '@/config/data-source';
-import { IdCard } from '@/entities/id-card';
-import { User } from '@/entities/user';
+import { AppDataSource } from '../config/data-source';
+import { IdCard } from '../entities/id-card';
+import { User } from '../entities/user';
 import { Response, Request } from 'express';
 import { Between, MoreThanOrEqual } from 'typeorm';
 import { subDays, format } from 'date-fns';

@@ -1,4 +1,4 @@
-import { uploadImageToCloudinary } from '@/service/upload-service';
+import { uploadImageToCloudinary } from '../service/upload-service';
 import { Request, Response } from 'express';
 
 export const uploadController = async (req: Request, res: Response) => {

@@ -10,7 +10,7 @@ import { IdCard } from './id-card';
 import { SocialLink } from './social-link';
 import { Favorite } from './favorite';
 import { Device } from './device';
-import { UserRole } from '@/enum';
+import { UserRole } from '../enum';
 
 @Entity()
 export class User {

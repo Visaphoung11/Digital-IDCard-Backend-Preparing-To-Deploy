@@ -1,4 +1,4 @@
-import { uploadController } from '@/controller/upload-controller';
+import { uploadController } from '../../controller/upload-controller';
 import { Router } from 'express';
 import multer from 'multer';
 

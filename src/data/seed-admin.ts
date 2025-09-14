@@ -1,11 +1,8 @@
-import { AppDataSource } from '@/config/data-source';
-import { Device } from '@/entities/device';
-import { User } from '@/entities/user';
-import { UserRole } from '@/enum';
+import { AppDataSource } from '../config/data-source';
+import { Device } from '../entities/device';
+import { User } from '../entities/user';
+import { UserRole } from '../enum';
 import bcrypt from 'bcryptjs';
-import dotenv from 'dotenv';
-dotenv.config();
-
 export const seedAdminUser = async () => {
   const userRepo = AppDataSource.getRepository(User);
   const deviceRepo = AppDataSource.getRepository(Device);

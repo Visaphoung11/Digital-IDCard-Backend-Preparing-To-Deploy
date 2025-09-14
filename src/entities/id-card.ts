@@ -10,9 +10,9 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { User } from './user';
-import { Gender } from '@/enum';
+import { Gender } from '../enum';
 import { SocialLink } from './social-link';
-import { CardType } from '@/enum/card-type-enum';
+import { CardType } from '../enum/card-type-enum';
 
 @Entity()
 export class IdCard {

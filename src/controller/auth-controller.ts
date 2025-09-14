@@ -4,7 +4,7 @@ import {
   refreshTokenHandler,
   registerService,
   runRegisterService,
-} from '@/service/auth-service';
+} from '../service/auth-service';
 import type { Request, Response } from 'express';
 
 export const registerController = async (

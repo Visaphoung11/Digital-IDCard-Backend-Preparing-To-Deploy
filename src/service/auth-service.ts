@@ -1,13 +1,13 @@
-import { AppDataSource } from '@/config/data-source';
-import { User } from '@/entities/user';
+import { AppDataSource } from '../config/data-source';
+import { User } from '../entities/user';
 import bcrypt from 'bcryptjs';
-import { generateAccessToken, generateRefreshToken } from '@/util';
-import { UserRole } from '@/enum';
+import { generateAccessToken, generateRefreshToken } from '../util';
+import { UserRole } from '../enum';
 import { Request, Response } from 'express';
-import { verifyRefreshToken } from '@/util/jwt';
+import { verifyRefreshToken } from '../util/jwt';
 import { saveDeviceService } from './device-service';
-import { RegisterInput } from '@/types/inputRegister';
-import { Device } from '@/entities/device';
+import { RegisterInput } from '../types/inputRegister';
+import { Device } from '../entities/device';
 
 /** Script for add new users from users.json */
 export const runRegisterService = async (input: RegisterInput) => {

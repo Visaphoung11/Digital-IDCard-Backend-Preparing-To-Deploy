@@ -1,8 +1,8 @@
-import { AppDataSource } from '@/config/data-source';
-import { IdCard } from '@/entities/id-card';
-import { SocialLink } from '@/entities/social-link';
-import { User } from '@/entities/user';
-import { paginate } from '@/util';
+import { AppDataSource } from '../config/data-source';
+import { IdCard } from '../entities/id-card';
+import { SocialLink } from '../entities/social-link';
+import { User } from '../entities/user';
+import { paginate } from '../util/pagination';
 import { Request, Response } from 'express';
 import { Not } from 'typeorm';
 

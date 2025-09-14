@@ -4,7 +4,7 @@ import {
   meService,
   updateProfileService,
   updateUserByAdminService,
-} from '@/service/user-service';
+} from '../service/user-service';
 import { Request, Response } from 'express';
 
 export const getUsersController = async (
@@ -32,7 +32,7 @@ export const meController = async (
   res.status(201).json(result);
 };
 
-export const updateProfileController = async (req: Request, res: Response) => {
+export const updateProfileController = async (req: Request, res: Response): Promise<void> => {
   const result = await updateProfileService(req, res);
   res.status(201).json(result);
 };
@@ -40,12 +40,12 @@ export const updateProfileController = async (req: Request, res: Response) => {
 export const updateUserByAdminController = async (
   req: Request,
   res: Response,
-) => {
+): Promise<void> => {
   const result = await updateUserByAdminService(req, res);
   res.status(201).json(result);
 };
 
-export const DeleteUserController = async (req: Request, res: Response) => {
+export const DeleteUserController = async (req: Request, res: Response): Promise<void> => {
   await deleteUserService(req, res);
   res.status(201).json({
     message: 'Deleted this user successfully',

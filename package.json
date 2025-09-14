@@ -5,9 +5,10 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "nodemon src/server.ts",
-    "build": "tsc && tsc-alias",
+    "build": "tsc -p tsconfig.json --outDir dist && tsc-alias -p tsconfig.json",
     "start": "node dist/server.js",
-    "vercel-build": "npm run build"
+    "vercel-build": "node vercel-build.js",
+    "vercel-dev": "vercel dev"
   },
   "keywords": [],
   "author": "",
@@ -29,7 +30,7 @@
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.16",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",

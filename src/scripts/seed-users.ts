@@ -6,8 +6,8 @@
 import 'dotenv/config';
 import fs from 'fs';
 import path from 'path';
-import config from '@/config';
-import { runRegisterService } from '@/service/auth-service';
+import config from '../config';
+import { runRegisterService } from '../service/auth-service';
 
 const filePath = path.join(__dirname, '../data/users.json');
 // const users = JSON.parse(fs.readFileSync(filePath, 'utf-8'));

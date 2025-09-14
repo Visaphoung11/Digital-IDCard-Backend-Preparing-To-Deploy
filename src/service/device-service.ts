@@ -1,7 +1,7 @@
-import { AppDataSource } from '@/config/data-source';
-import { DeviceDto } from '@/dto/request-dto/device-dto';
-import { Device } from '@/entities/device';
-import { User } from '@/entities/user';
+import { AppDataSource } from '../config/data-source';
+import { DeviceDto } from '../dto/request-dto/device-dto';
+import { Device } from '../entities/device';
+import { User } from '../entities/user';
 import { Request, Response } from 'express';
 
 export const saveDeviceService = async (userId: string, req: Request) => {

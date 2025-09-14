@@ -1,4 +1,4 @@
-import { getDashboardAnalyticsService } from '@/service/dashboard-service';
+import { getDashboardAnalyticsService } from '../service/dashboard-service';
 import { Request, Response } from 'express';
 
 export const getDashboardAnalyticsController = async (

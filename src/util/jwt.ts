@@ -1,7 +1,7 @@
 // src/utils/jwt.ts
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { UserRole } from '@/enum';
+import { UserRole } from '../enum';
 dotenv.config();
 
 const {
@@ -11,7 +11,7 @@ const {
   REFRESH_TOKEN_EXPIRES_IN,
 } = process.env;
 
-interface JwtPayload {
+export interface JwtPayload {
   user_id: string;
   email: string;
   roles: UserRole[];

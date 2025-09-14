@@ -15,13 +15,13 @@ import helmet from 'helmet';
 /**
  * Custom Modules
  */
-import config from '@/config';
-import limiter from '@/lib/express_rate_limit';
+import config from './config';
+import limiter from './lib/express_rate_limit';
 
 /**
  * Router
  */
-import v1Router from '@/routes/v1';
+import v1Router from './routes/v1';
 
 /**
  * Types
@@ -70,6 +70,9 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
 
+//Set trust proxy to false for local development to avoid rate limiting errors
+app.set('trust proxy', false);
+
 //Enable response compression to reduce payload size and improve performance
 app.use(compression({ threshold: 1024 })); // only compress responses larger than 1kb
 
@@ -96,7 +99,7 @@ app.use(limiter);
     app.listen(config.PORT, () => {
       console.log(`Server is running on port ${config.PORT}`);
     });
-  } catch (error) {
+  } catch (error: any) {
     console.log('Failed to start server', error);
 
     if (config.NODE_ENV === 'production') {

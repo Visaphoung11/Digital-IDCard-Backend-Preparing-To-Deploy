@@ -8,7 +8,7 @@ import {
   logoutController,
   refreshTokenController,
   registerController,
-} from '@/controller/auth-controller';
+} from '../../controller/auth-controller';
 
 const router = Router();
 
