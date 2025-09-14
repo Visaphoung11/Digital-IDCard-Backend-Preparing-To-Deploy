@@ -1,20 +1,27 @@
 {
-    "version": 2,
-    "name": "digital-id-card-api",
-    "builds": [
-      {
-        "src": "api/index.ts",
-        "use": "@vercel/node"
-      }
-    ],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "api/index.ts"
-      }
-    ],
+  "version": 2,
+  "name": "digital-id-card-api",
+  "builds": [
+    {
+      "src": "dist/server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "dist/server.js"
+    }
+  ],
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "outputDirectory": "dist",
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "build": {
     "env": {
       "NODE_ENV": "production"
     }
   }
-  
+}
