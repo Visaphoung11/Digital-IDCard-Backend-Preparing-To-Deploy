@@ -82,31 +82,77 @@ app.use(helmet());
 //Apply rate limiting middleware to prevent excessive requests and enhance security
 app.use(limiter);
 
-(async () => {
-  try {
-    //Initialize database connection
-    await config.DATA_SOURCE.initialize()
-      .then(async () => {
-        console.log('✅ Database connection successful');
-        await seedAdminUser(); // ⬅️ Seed admin user
-      })
-      .catch((error) => {
-        console.error('❌ Database connection failed:', error);
-      });
+// Mount API routes
+app.use('/api/v1', v1Router);
 
-    app.use('/api/v1', v1Router);
+// Initialize database connection for local development
+let isDatabaseInitialized = false;
+let isDatabaseInitializing = false;
 
-    app.listen(config.PORT, () => {
-      console.log(`Server is running on port ${config.PORT}`);
-    });
-  } catch (error: any) {
-    console.log('Failed to start server', error);
-
-    if (config.NODE_ENV === 'production') {
-      process.exit(1); // Exit the process with an error
-    }
+const initializeDatabase = async () => {
+  if (isDatabaseInitialized || isDatabaseInitializing) {
+    return;
   }
-})();
+
+  isDatabaseInitializing = true;
+  try {
+    await config.DATA_SOURCE.initialize();
+    console.log('✅ Database connection successful');
+    await seedAdminUser(); // ⬅️ Seed admin user
+    isDatabaseInitialized = true;
+  } catch (error: any) {
+    console.error('❌ Database connection failed:', error);
+    throw error;
+  } finally {
+    isDatabaseInitializing = false;
+  }
+};
+
+// Serverless first request handler
+export const handler = async (req: any, res: any) => {
+  try {
+    // Initialize database on first cold start
+    await initializeDatabase();
+
+    // Let Express handle the request
+    return app(req, res);
+  } catch (error: any) {
+    console.error('Handler error:', error);
+    return res.status(500).json({
+      error: 'Internal server error',
+      message: 'Database connection failed',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+// Local development server
+if (require.main === module) {
+  // Only start server when run directly (not as serverless function)
+  initializeDatabase()
+    .then(() => {
+      app.listen(config.PORT, () => {
+        console.log(`🚀 Local server running on port ${config.PORT}`);
+      });
+    })
+    .catch((error) => {
+      console.error('❌ Failed to start local server:', error);
+      process.exit(1);
+    });
+
+  // Graceful shutdown
+  process.on('SIGTERM', async () => {
+    console.log('🛑 SIGTERM received, shutting down gracefully');
+    await config.DATA_SOURCE.destroy();
+    process.exit(0);
+  });
+
+  process.on('SIGINT', async () => {
+    console.log('🛑 SIGINT received, shutting down gracefully');
+    await config.DATA_SOURCE.destroy();
+    process.exit(0);
+  });
+}
 
 /**
  * Handle server shutdown gracefully by disconnecting from the database
@@ -139,3 +185,5 @@ const handleServerShutdown = async () => {
 
 process.on('SIGTERM', handleServerShutdown);
 process.on('SIGINT', handleServerShutdown);
+
+export default app;
