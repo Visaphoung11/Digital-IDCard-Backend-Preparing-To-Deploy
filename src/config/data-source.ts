@@ -22,13 +22,9 @@ export const AppDataSource = new DataSource({
     // Connection pool settings for production
     connectTimeoutMS: 10000, // Wait 10s for connection
     query_timeout: 15000, // 15s query timeout
-    sslmode: 'require', // Force SSL connection
+    sslmode: 'disable', // Disable SSL for this server
   },
   // entities: ["src/entity/**/*.ts"],
   entities: [User, IdCard, SocialLink, Favorite, Device],
   maxQueryExecutionTime: 15000, // 15s timeout for Vercel
-  ssl: {
-    rejectUnauthorized: false, // Allow self-signed certificates if needed
-    // For some PostgreSQL providers, you might need: rejectUnauthorized: false
-  },
 });
