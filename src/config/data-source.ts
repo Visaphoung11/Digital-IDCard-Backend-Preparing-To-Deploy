@@ -15,11 +15,20 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   synchronize: false, //false in production
-  logging: process.env.NODE_ENV === 'development', // Only log in development
+  logging: false, // Disable all logging in production
   dropSchema: false, // Prevent schema drop in production
   cache: false, // Disable query result cache for serverless
+  extra: {
+    // Connection pool settings for production
+    connectTimeoutMS: 10000, // Wait 10s for connection
+    query_timeout: 15000, // 15s query timeout
+    sslmode: 'require', // Force SSL connection
+  },
   // entities: ["src/entity/**/*.ts"],
   entities: [User, IdCard, SocialLink, Favorite, Device],
-  maxQueryExecutionTime: 10000, // 10s timeout for queries
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  maxQueryExecutionTime: 15000, // 15s timeout for Vercel
+  ssl: {
+    rejectUnauthorized: false, // Allow self-signed certificates if needed
+    // For some PostgreSQL providers, you might need: rejectUnauthorized: false
+  },
 });
